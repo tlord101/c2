@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ARKB C2</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #222426;
+            color: #cecdcd;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 80%;
+            margin: 20px auto;
+        }
+
+        a {
+            background-color: #000;
+            color: #fff;
+            font-weight: bold;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            border-radius: 10px;
+            text-decoration: none;
+            font-size: 12px;
+        }
+
+        h1 {
+            color: #fff;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #333;
+        }
+
+        .status {
+            color: red !important;
+            font-size: 10px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        table.dataTable tbody td,
+        table.dataTable thead th {
+            color: #cecdcd !important;
+        }
+
+        table.dataTable.no-footer {
+            border-bottom: 1px solid #333 !important;
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.css">
+    <script type="text/javascript" charset="utf8"
+        src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.js"></script>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>Welcome to ARKB C2</h1>
+        <table id="tbl" class="display">
+            <thead>
+                <tr>
+                    <th>Device Name</th>
+                    <th>Payment Ref</th>
+                    <th>IP Address</th>
+                    <th>MAC Address</th>
+                    <th>Last Ping</th>
+                    <th>Decryption Key</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for device in devices %}
+                <tr>
+                    <td>{{ device.name }}</td>
+                    <td>{{ device.payment_ref }}</td>
+                    <td>{{ device.ip }}</td>
+                    <td>{{ device.mac }}</td>
+                    <td>{{ device.last_ping.strftime("%Y-%m-%d %H:%M:%S") }}</td>
+                    <td>{{ device.decryption_key }}</td>
+                    {% if not device.is_decrypted %}
+                    <td class="status">Encrypted</td>
+                    {% else %}
+                    <td class="status">Decrypted</td>
+                    {% endif %}
+                    {% if not device.is_decrypted %}
+                    <td><a href="{{ url_for('set_decrypted', payment_ref=device.payment_ref) }}">Decrypt</a></td>
+                    {% else %}
+                    <td><a style="cursor: not-allowed;" href="#">[Decrypted]</a></td>
+                    {% endif %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div id="bg"></div>
+    <script>
+        $(document).ready(function () {
+            $('#tbl').DataTable();
+        });
+    </script>
+</body>
+
+</html>
