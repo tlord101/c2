@@ -10,6 +10,9 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'sqlite:///devices.db')
 
 db = SQLAlchemy(app)
+with app.app_context():
+    db.create_all()
+
 
 ADMIN_PAGE = 'admin' # Removed leading slash
 BITCOIN_ADDRESS = 'bc1qy4hhsg7pv4cyuv7lnd8drszd233r0x2zevukvd'
