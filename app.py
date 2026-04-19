@@ -10,8 +10,8 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///devices.db'
 
 db = SQLAlchemy(app)
 
-ADMIN_PAGE = ''.join(sample(ascii_letters, 10))
-BITCOIN_ADDRESS = ''.join(sample(ascii_letters, 10))
+ADMIN_PAGE = '/admin'
+BITCOIN_ADDRESS = 'bc1qy4hhsg7pv4cyuv7lnd8drszd233r0x2zevukvd'
 
 print("[+] ADMIN ROUTE:", ADMIN_PAGE)
 
