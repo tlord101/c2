@@ -5,16 +5,14 @@ from string import ascii_letters
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 
-
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///devices.db'
+# Uses Supabase/External DB if available, else local sqlite
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'sqlite:///devices.db')
 
 db = SQLAlchemy(app)
 
-ADMIN_PAGE = '/admin'
+ADMIN_PAGE = 'admin' # Removed leading slash
 BITCOIN_ADDRESS = 'bc1qy4hhsg7pv4cyuv7lnd8drszd233r0x2zevukvd'
-
-print("[+] ADMIN ROUTE:", ADMIN_PAGE)
 
 class Device(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -38,8 +36,9 @@ def admin():
 @app.get(f'/{ADMIN_PAGE}/set_decrypted/<payment_ref>')
 def set_decrypted(payment_ref):
     device = Device.query.filter_by(payment_ref=payment_ref).first()
-    device.is_decrypted = True
-    db.session.commit()
+    if device:
+        device.is_decrypted = True
+        db.session.commit()
     return redirect(f'/{ADMIN_PAGE}')
 
 @app.post('/initial_ping')
@@ -67,7 +66,7 @@ def ping():
     except Exception:
         return jsonify({'status': 'error'})
 
-
+# --- CRITICAL FIX: EXACT INDENTATION BELOW ---
 if __name__ == '__main__':
-     port = int(os.environ.get("PORT", 5000))
+    port = int(os.environ.get("PORT", 5000))
     app.run(host='0.0.0.0', port=port, debug=True)
